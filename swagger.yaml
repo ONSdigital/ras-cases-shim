@@ -1,0 +1,635 @@
+definitions:
+  ActionPlanMapping:
+    properties:
+      actionPlanId: {description: Identifies the action plan the mapping maps to,
+        type: integer}
+      actionPlanMappingId: {description: Unique id of the mapping, type: integer}
+      caseTypeId: {description: Unique id of the case type that this mapping belongs
+          to, type: integer}
+      inboundChannel: {description: Identifies the expected response channel, type: string}
+      isDefault: {description: true if this mapping is the default for the casetype
+          it is associated with, type: boolean}
+      outboundChannel: {description: Identifies the required delivery channel, type: string}
+      variant: {description: Identifies the required language variant, type: string}
+    type: object
+  Address:
+    properties:
+      category:
+        description: only if care home or hotel
+        enum: [HOTEL, CARE HOME]
+        type: string
+      eastings: {description: Easting or x-coordinate., type: integer}
+      estabType: {description: Communal Establishment type., type: string}
+      htc: {description: Hard to count code., type: integer}
+      ladCode: {description: GSS nine character LAD code., type: string}
+      latitude: {description: Position North or South of Equator., type: number}
+      line1: {description: Address details., type: string}
+      line2: {description: Address details., type: string}
+      longitude: {description: Position East or West of Greenwich Meridian., type: number}
+      lsoaArea: {description: Lower Layer Super Output Area code., type: string}
+      msoaArea: {description: Middle layer Super Output Area code., type: string}
+      northings: {description: Northing or y-coordinate., type: integer}
+      outputArea: {description: Census Geography Output Area code., type: string}
+      postcode: {description: Postal Code., type: string}
+      regionCode: {description: GSS nine character Region geography code., type: string}
+      townName: {description: Postal town name., type: string}
+      type: {description: 'Address type CE, HH, I.', type: string}
+      uprn: {description: Unique Property Reference Number., type: integer}
+    type: object
+  Case:
+    properties:
+      actionPlanMappingId: {description: Action plan mapping for case., type: integer}
+      caseGroupId: {description: Unique case group identifier, type: integer}
+      caseId: {description: Internal Unique case identifier., type: integer}
+      caseRef: {description: External Unique case reference., type: string}
+      caseTypeId: {description: Case Type ID, type: integer}
+      contact: {$ref: '#/definitions/Contact'}
+      createdBy: {description: Creator of case., type: string}
+      createdDateTime: {description: Creation date-time., format: date-time, type: string}
+      iac: {description: Internet Access Code, type: string}
+      responses: {$ref: '#/definitions/Responses'}
+      state:
+        default: SAMPLED_INIT
+        description: State of case.
+        enum: [SAMPLED_INIT, REPLACEMENT_INIT, ACTIVE, INACTIVE, RESPONDED]
+        type: string
+    type: object
+  CaseCreationRequest:
+    properties:
+      actionPlanMappingId: {description: The action plan mapping to associate with
+          the new case, type: integer}
+      caseTypeId: {description: The case type to associate with the new case, type: integer}
+      emailAddress: {description: Respondent email address., type: string}
+      forename: {description: Respondent forename., type: string}
+      phoneNumber: {description: Respondent phone number., type: string}
+      surname: {description: Respondent surname., type: string}
+      title: {description: Respondent title, type: string}
+    required: [caseTypeId, actionPlanMappingId, title, forename, surname]
+    type: object
+  CaseEvent:
+    properties:
+      caseEventId: {description: Unique case event identifier., type: integer}
+      caseId: {description: Unique case identifier., type: integer}
+      category: {description: Identifier of the category that triggered the case event.,
+        type: string}
+      createdBy: {description: Creator of case event., type: string}
+      createdDateTime: {description: Creation date-time., format: date-time, type: string}
+      description: {description: Case event description., type: string}
+      subCategory: {description: Optional free text for use by automatically-created
+          case events., type: string}
+    required: [caseEventId, caseId, description, category, createdDateTime, createdBy]
+    type: object
+  CaseEventCreationRequest:
+    properties:
+      caseCreationRequest: {$ref: '#/definitions/CaseCreationRequest'}
+      category: {description: Identifier of the category of event which triggered
+          the case event., type: string}
+      createdBy: {description: Creator of case event., type: string}
+      description: {description: Case event description., type: string}
+      subCategory: {description: Optional free text for use by automatically-created
+          case events., type: string}
+    required: [description, category, createdBy]
+    type: object
+  CaseGroup:
+    properties:
+      caseGroupId: {description: Unique id of group, type: integer}
+      sampleId: {description: Unique id of the sample this was created from, type: integer}
+      uprn: {description: Identifies the address for which this group belongs, type: integer}
+    type: object
+  CaseType:
+    properties:
+      caseTypeId: {description: Unique ID of case type., type: integer}
+      description: {description: Description of case type., type: string}
+      name: {description: Name of case type., type: string}
+      questionSet: {description: Type of questionnaire set., type: string}
+      respondent: {description: The type of respondent, type: string}
+    type: object
+  Category:
+    properties:
+      group: {description: the name of the group that the category is a part of, type: string}
+      longDescription: {description: Long description of category., type: string}
+      manual: {description: Whether the associated case event was created by a user
+          or by a system event., type: boolean}
+      name: {description: Category name - the unique identifier for the category.,
+        type: string}
+      role: {description: Security role with access to the category., type: string}
+      shortDescription: {description: Short description of category., type: string}
+    required: [name, shortDescription, longDescription, manual, role, group]
+    type: object
+  Contact:
+    properties:
+      emailAddress: {description: the contacts email address, type: string}
+      forename: {description: the contacts forename, type: string}
+      phoneNumber: {description: the contacts phone number, type: string}
+      surname: {description: the contacts surname, type: string}
+      title: {description: the contacts title, type: string}
+    type: object
+  Error:
+    properties:
+      code: {description: Error code, type: string}
+      message: {description: Error message, type: string}
+      timestamp: {description: Unique error timestamp that can be searched for in
+          logs, type: integer}
+    type: object
+  GeographyDetails:
+    properties:
+      code: {description: Geography area code value for which to create cases., type: string}
+      type: {description: 'Type of geography area for which to create cases e.g. REGION,
+          LA, MSOA, LSOA, OA.', type: string}
+    type: object
+  ReportContentsRequest:
+    properties:
+      contents: {description: Content of report., type: string}
+      createdDateTime: {description: Date and time report was created., type: string}
+      reportId: {description: Id associated with report., type: integer}
+      reportType: {description: Type of report returned., type: string}
+    type: object
+  ReportSummaryRequest:
+    properties:
+      creatdedatetime: {description: Date created for report, type: string}
+      reportid: {description: id of the report, type: integer}
+      reporttype: {description: Report Type, type: string}
+    type: object
+  ReportTypeListRequest:
+    properties:
+      displayname: {description: Report Type Display Name, type: string}
+      orderid: {description: Order Id, type: integer}
+      reporttype: {description: Report Type, type: string}
+      reporttypeid: {description: Report Type Id, type: integer}
+    type: object
+  Response:
+    properties:
+      dateTime: {description: Date and time the questionnaire was sent for return.,
+        format: date-time, type: string}
+      inboundChannel: {description: The type of channel used to make the response,
+        type: string}
+    type: object
+  Responses:
+    items: {$ref: '#/definitions/Response'}
+    type: array
+  Sample:
+    properties:
+      addressCriteria: {description: Address selection criteria., type: string}
+      description: {description: Description of sample., type: string}
+      name: {description: Name of sample., type: string}
+      sampleCaseTypes: {$ref: '#/definitions/SampleCaseTypes'}
+      sampleId: {description: Unique ID of sample., type: integer}
+      survey: {description: Survey instrument name., type: string}
+    type: object
+  SampleCaseType:
+    properties:
+      caseTypeId: {description: Unique ID of case type., type: integer}
+      respondent: {description: The type of respondent, type: string}
+    type: object
+  SampleCaseTypes:
+    items: {$ref: '#/definitions/SampleCaseType'}
+    type: array
+host: localhost:8080
+info: {description: The Case service manages Cases and associated address frame data
+    and forms part of the Response Management product., title: Case Service API, version: 9.32.0}
+paths:
+  /actionplanmappings/casetype/{caseTypeId}:
+    get:
+      description: Returns the Action Plan Mappings linked to the given case type
+      operationId: stub19
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Uniques identifier of the case type linked to the mappings,
+        in: path, name: caseTypeId, required: true, type: integer}
+      responses:
+        '200':
+          description: ActionPlanMappings details associated with the case type
+          schema:
+            items: {$ref: '#/definitions/ActionPlanMapping'}
+            type: array
+        '404':
+          description: CaseType not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get the mappings associated with the provided case type
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /actionplanmappings/{mappingId}:
+    get:
+      description: Return the action plan mapping identified by the supplied id
+      operationId: stub1
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: The unique identifier for the action plan mapping, in: path,
+        name: mappingId, required: true, type: integer}
+      responses:
+        '200':
+          description: ActionPlanMapping details for the supplied id
+          schema: {$ref: '#/definitions/ActionPlanMapping'}
+        '404':
+          description: ActionPlanMapping not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get the action plan mapping identified by the id
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /addresses/postcode/{postcode}:
+    get:
+      description: Return all address details for the supplied postcode.
+      operationId: stub2
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Postal code., in: path, name: postcode, required: true, type: string}
+      responses:
+        '200':
+          description: Address details for supplied postcode.
+          schema:
+            items: {$ref: '#/definitions/Address'}
+            type: array
+        '404':
+          description: Postcode not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get address information for a postcode.
+      tags: [Frame]
+      x-swagger-router-controller: controllers.cases
+  /addresses/{uprn}:
+    get:
+      description: Return the full address details for the supplied Unique Property
+        Reference Number (UPRN).
+      operationId: stub3
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Unique Property Reference Number for which to return address
+          details., in: path, name: uprn, required: true, type: integer}
+      responses:
+        '200':
+          description: Address details for supplied UPRN.
+          schema: {$ref: '#/definitions/Address'}
+        '404':
+          description: UPRN not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get the address information for the specified UPRN.
+      tags: [Frame]
+      x-swagger-router-controller: controllers.cases
+  /casegroups/uprn/{uprn}:
+    get:
+      description: Return the casegroups associated with a UPRN
+      operationId: stub4
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: The UPRN of the address the casegroups were created for, in: path,
+        name: uprn, required: true, type: integer}
+      responses:
+        '200':
+          description: CaseGroup details for all groups associated with the UPRN
+          schema:
+            items: {$ref: '#/definitions/CaseGroup'}
+            type: array
+        '404':
+          description: CaseGroup not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get the casegroups for the provided UPRN
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /casegroups/{caseGroupId}:
+    get:
+      description: Return the casegroup associated with a case group id
+      operationId: stub5
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: The caseGroupId of the casegroup to be fetched, in: path, name: caseGroupId,
+        required: true, type: integer}
+      responses:
+        '200':
+          description: CaseGroup details for the requested group id
+          schema: {$ref: '#/definitions/CaseGroup'}
+        '404':
+          description: CaseGroup not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get the casegroup for the provided id
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /cases/casegroup/{caseGroupId}:
+    get:
+      description: Return details of cases for the supplied case group
+      operationId: stub6
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: The id of the casegroup, in: path, name: caseGroupId, required: true,
+        type: integer}
+      responses:
+        '200':
+          description: Case details for supplied CaseGroup.
+          schema:
+            items: {$ref: '#/definitions/Case'}
+            type: array
+        '404':
+          description: CaseGroup not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get the cases for a given casegroup
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /cases/iac/{iac}:
+    get:
+      description: Return details of a case for the supplied internet access code
+      operationId: stub7
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Unique case IAC, in: path, name: iac, required: true, type: string}
+      responses:
+        '200':
+          description: Case details for supplied IAC
+          schema: {$ref: '#/definitions/Case'}
+        '404':
+          description: Case not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get the case information for the specified case.
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /cases/{caseId}:
+    get:
+      description: Return details of a case for the supplied case ID.
+      operationId: stub8
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Unique case ID., in: path, name: caseId, required: true, type: integer}
+      responses:
+        '200':
+          description: Case details for supplied case ID.
+          schema: {$ref: '#/definitions/Case'}
+        '404':
+          description: Case not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get the case information for the specified case.
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /cases/{caseId}/events:
+    get:
+      description: Return all events for the supplied case ID.
+      operationId: stub9
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Unique case ID., in: path, name: caseId, required: true, type: integer}
+      responses:
+        '200':
+          description: All event details for supplied case ID.
+          schema:
+            items: {$ref: '#/definitions/CaseEvent'}
+            type: array
+        '204': {description: No case events}
+        '404':
+          description: Case not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get the events that occurred on a specified case.
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+    post:
+      consumes: [application/json]
+      description: Creates a case event from the mandatory description, category and
+        createdBy properties. Certain types of events will require the optional embedded
+        CaseCreationRequest to be provided.
+      operationId: stub10
+      parameters:
+      - {description: 'Response type, application/json', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Unique case ID., in: path, name: caseId, required: true, type: integer}
+      - description: Case event to create
+        in: body
+        name: caseEvent
+        required: true
+        schema: {$ref: '#/definitions/CaseEventCreationRequest'}
+      responses:
+        '201':
+          description: Case event created
+          schema: {$ref: '#/definitions/CaseEvent'}
+        '400': {description: Invalid input}
+        '404':
+          description: Case not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Creates a case event.
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /casetypes/{caseTypeId}:
+    get:
+      description: Return information for the supplied case type code.
+      operationId: stub11
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Unique case type ID., in: path, name: caseTypeId, required: true,
+        type: integer}
+      responses:
+        '200':
+          description: A single case type.
+          schema: {$ref: '#/definitions/CaseType'}
+        '404':
+          description: Case type not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get information for the specified case type.
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /categories:
+    get:
+      description: Return all case event categories, optionally filtered by security
+        role.
+      operationId: stub12
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Security role to filter by, in: query, name: role, required: false,
+        type: string}
+      - {description: The Category Group to filter by, in: query, name: group, required: false,
+        type: string}
+      responses:
+        '200':
+          description: An array of case event categories
+          schema:
+            items: {$ref: '#/definitions/Category'}
+            type: array
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get all case event categories.
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /categories/{categoryName}:
+    get:
+      description: Return information for the supplied category name.
+      operationId: stub13
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Unique category name., in: path, name: categoryName, required: true,
+        type: integer}
+      responses:
+        '200':
+          description: A single category.
+          schema: {$ref: '#/definitions/Category'}
+        '404':
+          description: Category not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get information for the specified category.
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /reports/types:
+    get:
+      description: Return a list of report types from the reporttype table
+      operationId: stub14
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      responses:
+        '200':
+          description: List of report types
+          schema: {$ref: '#/definitions/ReportTypeListRequest'}
+        '404':
+          description: Report types not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get list of report types
+      tags: [Reports]
+      x-swagger-router-controller: controllers.cases
+  /reports/types/{reportType}:
+    get:
+      description: Return a list of reports from the reporttype table ommitting the
+        contents
+      operationId: stub15
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: response type used to search responserepository table ., in: path,
+        name: reportType, required: true, type: string}
+      responses:
+        200:
+          description: List of reports
+          schema: {$ref: '#/definitions/ReportSummaryRequest'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+        404:
+          description: Report type not found
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get list of reports
+      tags: [Reports]
+      x-swagger-router-controller: controllers.cases
+  /reports/{reportId}:
+    get:
+      description: Return a report associated with specific Id
+      operationId: stub16
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Id used to search for report, in: path, name: reportId, required: true,
+        type: integer}
+      responses:
+        200:
+          description: Return contents of report
+          schema: {$ref: '#/definitions/ReportContentsRequest'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+        404:
+          description: Report type not found
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get report by Id
+      tags: [Reports]
+      x-swagger-router-controller: controllers.cases
+  /samples/{sampleId}:
+    get:
+      description: Return information for the supplied sample code.
+      operationId: stub17
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Unique sample ID., in: path, name: sampleId, required: true,
+        type: integer}
+      responses:
+        '200':
+          description: A single sample.
+          schema: {$ref: '#/definitions/Sample'}
+        '404':
+          description: Sample not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Get information for the specified sample.
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+    put:
+      description: Update the supplied sample by creating the cases for the provided
+        geography type and code.
+      operationId: stub18
+      parameters:
+      - {description: 'Response type, application/json.', in: header, name: Accept,
+        required: false, type: string}
+      - {description: Unique sample ID., in: path, name: sampleId, required: true,
+        type: integer}
+      - description: Geography for which to create cases.
+        in: body
+        name: geographyDetails
+        required: true
+        schema: {$ref: '#/definitions/GeographyDetails'}
+      responses:
+        '200':
+          description: Cases created.
+          schema: {$ref: '#/definitions/Sample'}
+        '404':
+          description: Sample not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
+          schema: {$ref: '#/definitions/Error'}
+      summary: Create cases for the specified sample.
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+produces: [application/json]
+schemes: [https]
+swagger: '2.0'
+tags:
+- {description: Management of case information, name: Case}
+- {description: Navigation of address frame information, name: Frame}
