@@ -1,1 +1,1 @@
-web: ONS_ENV=development python main.py
+web: python main.py
