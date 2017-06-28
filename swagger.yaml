@@ -547,11 +547,11 @@ paths:
         200:
           description: List of reports
           schema: {$ref: '#/definitions/ReportSummaryRequest'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
         404:
           description: Report type not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
           schema: {$ref: '#/definitions/Error'}
       summary: Get list of reports
       tags: [Reports]
@@ -569,11 +569,11 @@ paths:
         200:
           description: Return contents of report
           schema: {$ref: '#/definitions/ReportContentsRequest'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
         404:
           description: Report type not found
+          schema: {$ref: '#/definitions/Error'}
+        default:
+          description: Unexpected error
           schema: {$ref: '#/definitions/Error'}
       summary: Get report by Id
       tags: [Reports]
