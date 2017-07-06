@@ -188,122 +188,6 @@ host: localhost:8080
 info: {description: The Case service manages Cases and associated address frame data
     and forms part of the Response Management product., title: Case Service API, version: 9.32.0}
 paths:
-  /actionplanmappings/casetype/{caseTypeId}:
-    get:
-      description: Returns the Action Plan Mappings linked to the given case type
-      operationId: stub19
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      - {description: Uniques identifier of the case type linked to the mappings,
-        in: path, name: caseTypeId, required: true, type: integer}
-      responses:
-        '200':
-          description: ActionPlanMappings details associated with the case type
-          schema:
-            items: {$ref: '#/definitions/ActionPlanMapping'}
-            type: array
-        '404':
-          description: CaseType not found
-          schema: {$ref: '#/definitions/Error'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-      summary: Get the mappings associated with the provided case type
-      tags: [Case]
-      x-swagger-router-controller: controllers.cases
-  /actionplanmappings/{mappingId}:
-    get:
-      description: Return the action plan mapping identified by the supplied id
-      operationId: stub1
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      - {description: The unique identifier for the action plan mapping, in: path,
-        name: mappingId, required: true, type: integer}
-      responses:
-        '200':
-          description: ActionPlanMapping details for the supplied id
-          schema: {$ref: '#/definitions/ActionPlanMapping'}
-        '404':
-          description: ActionPlanMapping not found
-          schema: {$ref: '#/definitions/Error'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-      summary: Get the action plan mapping identified by the id
-      tags: [Case]
-      x-swagger-router-controller: controllers.cases
-  /addresses/postcode/{postcode}:
-    get:
-      description: Return all address details for the supplied postcode.
-      operationId: stub2
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      - {description: Postal code., in: path, name: postcode, required: true, type: string}
-      responses:
-        '200':
-          description: Address details for supplied postcode.
-          schema:
-            items: {$ref: '#/definitions/Address'}
-            type: array
-        '404':
-          description: Postcode not found
-          schema: {$ref: '#/definitions/Error'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-      summary: Get address information for a postcode.
-      tags: [Frame]
-      x-swagger-router-controller: controllers.cases
-  /addresses/{uprn}:
-    get:
-      description: Return the full address details for the supplied Unique Property
-        Reference Number (UPRN).
-      operationId: stub3
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      - {description: Unique Property Reference Number for which to return address
-          details., in: path, name: uprn, required: true, type: integer}
-      responses:
-        '200':
-          description: Address details for supplied UPRN.
-          schema: {$ref: '#/definitions/Address'}
-        '404':
-          description: UPRN not found
-          schema: {$ref: '#/definitions/Error'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-      summary: Get the address information for the specified UPRN.
-      tags: [Frame]
-      x-swagger-router-controller: controllers.cases
-  /casegroups/uprn/{uprn}:
-    get:
-      description: Return the casegroups associated with a UPRN
-      operationId: stub4
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      - {description: The UPRN of the address the casegroups were created for, in: path,
-        name: uprn, required: true, type: integer}
-      responses:
-        '200':
-          description: CaseGroup details for all groups associated with the UPRN
-          schema:
-            items: {$ref: '#/definitions/CaseGroup'}
-            type: array
-        '404':
-          description: CaseGroup not found
-          schema: {$ref: '#/definitions/Error'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-      summary: Get the casegroups for the provided UPRN
-      tags: [Case]
-      x-swagger-router-controller: controllers.cases
   /casegroups/{caseGroupId}:
     get:
       description: Return the casegroup associated with a case group id
@@ -369,6 +253,17 @@ paths:
           description: Unexpected error
           schema: {$ref: '#/definitions/Error'}
       summary: Get the case information for the specified case.
+      tags: [Case]
+      x-swagger-router-controller: controllers.cases
+  /cases/partyid/{partyId}:
+    get:
+      description: Return the case for a given partyId
+      operationId: stub1
+      parameters:
+      - {description: Party Id, in: path, name: partyId, required: true, type: string}
+      responses:
+        '200': {description: Cases for partyId}
+        '404': {description: Party not found}
       tags: [Case]
       x-swagger-router-controller: controllers.cases
   /cases/{caseId}:
@@ -445,28 +340,6 @@ paths:
       summary: Creates a case event.
       tags: [Case]
       x-swagger-router-controller: controllers.cases
-  /casetypes/{caseTypeId}:
-    get:
-      description: Return information for the supplied case type code.
-      operationId: stub11
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      - {description: Unique case type ID., in: path, name: caseTypeId, required: true,
-        type: integer}
-      responses:
-        '200':
-          description: A single case type.
-          schema: {$ref: '#/definitions/CaseType'}
-        '404':
-          description: Case type not found
-          schema: {$ref: '#/definitions/Error'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-      summary: Get information for the specified case type.
-      tags: [Case]
-      x-swagger-router-controller: controllers.cases
   /categories:
     get:
       description: Return all case event categories, optionally filtered by security
@@ -491,7 +364,7 @@ paths:
       summary: Get all case event categories.
       tags: [Case]
       x-swagger-router-controller: controllers.cases
-  /categories/{categoryName}:
+  /categories/name/{categoryName}:
     get:
       description: Return information for the supplied category name.
       operationId: stub13
@@ -511,120 +384,6 @@ paths:
           description: Unexpected error
           schema: {$ref: '#/definitions/Error'}
       summary: Get information for the specified category.
-      tags: [Case]
-      x-swagger-router-controller: controllers.cases
-  /reports/types:
-    get:
-      description: Return a list of report types from the reporttype table
-      operationId: stub14
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      responses:
-        '200':
-          description: List of report types
-          schema: {$ref: '#/definitions/ReportTypeListRequest'}
-        '404':
-          description: Report types not found
-          schema: {$ref: '#/definitions/Error'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-      summary: Get list of report types
-      tags: [Reports]
-      x-swagger-router-controller: controllers.cases
-  /reports/types/{reportType}:
-    get:
-      description: Return a list of reports from the reporttype table ommitting the
-        contents
-      operationId: stub15
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      - {description: response type used to search responserepository table ., in: path,
-        name: reportType, required: true, type: string}
-      responses:
-        200:
-          description: List of reports
-          schema: {$ref: '#/definitions/ReportSummaryRequest'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-        404:
-          description: Report type not found
-          schema: {$ref: '#/definitions/Error'}
-      summary: Get list of reports
-      tags: [Reports]
-      x-swagger-router-controller: controllers.cases
-  /reports/{reportId}:
-    get:
-      description: Return a report associated with specific Id
-      operationId: stub16
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      - {description: Id used to search for report, in: path, name: reportId, required: true,
-        type: integer}
-      responses:
-        200:
-          description: Return contents of report
-          schema: {$ref: '#/definitions/ReportContentsRequest'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-        404:
-          description: Report type not found
-          schema: {$ref: '#/definitions/Error'}
-      summary: Get report by Id
-      tags: [Reports]
-      x-swagger-router-controller: controllers.cases
-  /samples/{sampleId}:
-    get:
-      description: Return information for the supplied sample code.
-      operationId: stub17
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      - {description: Unique sample ID., in: path, name: sampleId, required: true,
-        type: integer}
-      responses:
-        '200':
-          description: A single sample.
-          schema: {$ref: '#/definitions/Sample'}
-        '404':
-          description: Sample not found
-          schema: {$ref: '#/definitions/Error'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-      summary: Get information for the specified sample.
-      tags: [Case]
-      x-swagger-router-controller: controllers.cases
-    put:
-      description: Update the supplied sample by creating the cases for the provided
-        geography type and code.
-      operationId: stub18
-      parameters:
-      - {description: 'Response type, application/json.', in: header, name: Accept,
-        required: false, type: string}
-      - {description: Unique sample ID., in: path, name: sampleId, required: true,
-        type: integer}
-      - description: Geography for which to create cases.
-        in: body
-        name: geographyDetails
-        required: true
-        schema: {$ref: '#/definitions/GeographyDetails'}
-      responses:
-        '200':
-          description: Cases created.
-          schema: {$ref: '#/definitions/Sample'}
-        '404':
-          description: Sample not found
-          schema: {$ref: '#/definitions/Error'}
-        default:
-          description: Unexpected error
-          schema: {$ref: '#/definitions/Error'}
-      summary: Create cases for the specified sample.
       tags: [Case]
       x-swagger-router-controller: controllers.cases
 produces: [application/json]
